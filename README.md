@@ -2,6 +2,8 @@
 
 A Ruby client for the [Helicone AI Gateway](https://helicone.ai), wrapping the OpenAI API with built-in session tracking, cost attribution, and an agentic framework for building AI applications with tool/function calling.
 
+
+
 ## Why Helicone?
 
 [Helicone](https://helicone.ai) is an AI gateway that sits between your application and LLM providers (OpenAI, Anthropic, etc.). It provides:
@@ -15,6 +17,35 @@ A Ruby client for the [Helicone AI Gateway](https://helicone.ai), wrapping the O
 ![Helicone Dashboard](readme-assets/helicone-dashboard.png)
 
 *The Helicone dashboard shows all your LLM requests with latency, cost, and token usage at a glance.*
+
+### Under the hood
+This is an API that interacts with **any OpenAI-format /chat/completions LLM endpoint.**
+[Helicone](https://helicone.ai) acts as a proxy, similar to OpenRouter, with built in telemetry and more.
+
+This library adds the ability to interact with Helicone specific features like [Session waterfall tracking](https://github.com/genevere-inc/helicone-rb/tree/main?tab=readme-ov-file#session-and-account-tracking).
+
+### Alternatives
+
+**[RubyLLM](https://rubyllm.com/)** 
+
+This library is great for an opinioned quick start, but I found it has too much magic under the hood that makes using proxies like Helicone and OpenRouter very difficult.
+
+**[`alexrudall/ruby-openai`](https://github.com/alexrudall/ruby-openai)**
+
+This gem uses this great library under the hood. If you don't need tool calling or helicone, you can use this instead.
+
+**[`openai/openai-ruby`](https://github.com/openai/openai-ruby)**
+
+This is the official gem from OpenAI. It's severely lacking in functionality.
+
+**[`Traceloop`](https://traceloop.com/)**
+
+A telemetry tool built on top of OpenTelemetry. Their `traceloop-sdk` gem did not work out of the box as of June 2025, but accepts OpenTelemetry endpoints and works quite well for visualizing agentic workflows.
+
+Note that it **does not** act as a _proxy_ in the way Helicone and OpenRouter do, which may help if you need to use LLM hosts directly, or may be a drawback given it lacks the fallback mechanisms the proxies include.
+
+_Note:_ I've used this in production and it works very reliably for tracking, but cost aggregation has never worked correctly. For that and other challenges, switched to Helicone.
+
 
 ## Installation
 
