@@ -1,3 +1,5 @@
+> **Beta** - This library is under active development. APIs may change.
+
 # Helicone Ruby Client
 
 A Ruby client for the [Helicone AI Gateway](https://helicone.ai), wrapping the OpenAI API with built-in session tracking, cost attribution, and an agentic framework for building AI applications with tool/function calling.
