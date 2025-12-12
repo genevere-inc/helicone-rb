@@ -11,17 +11,17 @@ module Helicone
     # @param client [Helicone::Client] Optional client (creates new one if not provided)
     # @param tools [Array<Class>] Array of Tool subclasses
     # @param context [Object] Context object passed to tool#initialize
-    # @param system [String] System prompt
+    # @param system_prompt [String] System prompt
     # @param messages [Array<Helicone::Message>] Initial messages (for continuing conversations)
-    def initialize(client: nil, tools: [], context: nil, system: nil, messages: [])
+    def initialize(client: nil, tools: [], context: nil, system_prompt: nil, messages: [])
       @client = client || Client.new
       @tools = tools
       @context = context
       @messages = messages.dup
 
       # Add system message at the start if provided and not already present
-      if system && @messages.none? { |m| m.respond_to?(:role) && m.role == "system" }
-        @messages.unshift(Message.system(system))
+      if system_prompt && @messages.none? { |m| m.respond_to?(:role) && m.role == "system" }
+        @messages.unshift(Message.system(system_prompt))
       end
     end
 

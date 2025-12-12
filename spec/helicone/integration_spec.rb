@@ -115,7 +115,7 @@ RSpec.describe "Helicone Integration", type: :integration do
     it "executes tools and returns final response" do
       agent = Helicone::Agent.new(
         tools: [TestAdditionTool],
-        system: "You are a helpful assistant. Use the addition tool for math questions."
+        system_prompt: "You are a helpful assistant. Use the addition tool for math questions."
       )
 
       result = agent.run("What is 15 + 7? Use the addition tool.")

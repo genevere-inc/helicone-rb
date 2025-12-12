@@ -66,12 +66,12 @@ module Helicone
     #
     # @param prompt [String] User prompt text
     # @param model [String] Model ID to use for completion
-    # @param system [String] Optional system prompt
+    # @param system_prompt [String] Optional system prompt
     # @param options [Hash] Additional options passed to chat
     # @return [String] The text content of the response
-    def ask(prompt, model: nil, system: nil, **options)
+    def ask(prompt, model: nil, system_prompt: nil, **options)
       messages = []
-      messages << Message.system(system) if system
+      messages << Message.system(system_prompt) if system_prompt
       messages << Message.user_text(prompt)
 
       response = chat(messages: messages, model: model, **options)
@@ -83,13 +83,13 @@ module Helicone
     # @param prompt [String] User prompt text
     # @param image_url [String] URL or base64 data URI of the image
     # @param model [String] Model ID to use for completion
-    # @param system [String] Optional system prompt
+    # @param system_prompt [String] Optional system prompt
     # @param detail [String] Image detail level: "auto", "low", or "high"
     # @param options [Hash] Additional options passed to chat
     # @return [String] The text content of the response
-    def ask_with_image(prompt, image_url, model: nil, system: nil, detail: "auto", **options)
+    def ask_with_image(prompt, image_url, model: nil, system_prompt: nil, detail: "auto", **options)
       messages = []
-      messages << Message.system(system) if system
+      messages << Message.system(system_prompt) if system_prompt
       messages << Message.user_with_images(prompt, image_url, detail: detail)
 
       response = chat(messages: messages, model: model, **options)

@@ -23,7 +23,7 @@ client.ask("What is 2 + 2?")
 # => "2 + 2 equals 4."
 
 # With a system prompt
-client.ask("Tell me a joke", system: "You are a comedian")
+client.ask("Tell me a joke", system_prompt: "You are a comedian")
 
 # With a specific model
 client.ask("Explain Ruby blocks", model: "gpt-4o-mini")
@@ -115,7 +115,7 @@ end
 # Run the agent
 agent = Helicone::Agent.new(
 tools: [WeatherTool, CalculatorTool],
-system: "You are a helpful assistant with access to weather and calculator tools."
+system_prompt: "You are a helpful assistant with access to weather and calculator tools."
 )
 
 result = agent.run("What's the weather in San Francisco?")

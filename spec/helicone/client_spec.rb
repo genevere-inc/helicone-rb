@@ -177,7 +177,7 @@ RSpec.describe Helicone::Client do
 
     it "includes system message when provided" do
       client = described_class.new
-      client.ask("What is 2+2?", system: "You are a math tutor")
+      client.ask("What is 2+2?", system_prompt: "You are a math tutor")
 
       expect(mock_openai_client).to have_received(:chat).with(
         parameters: hash_including(

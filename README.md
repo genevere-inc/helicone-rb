@@ -112,7 +112,7 @@ response = client.ask("What is the capital of France?")
 # With system prompt
 response = client.ask(
   "Explain quantum computing",
-  system: "You are a physics teacher. Explain concepts simply."
+  system_prompt: "You are a physics teacher. Explain concepts simply."
 )
 ```
 
@@ -256,7 +256,7 @@ end
 ```ruby
 agent = Helicone::Agent.new(
   tools: [WeatherTool, CalendarTool],
-  system: "You are a helpful assistant with access to weather and calendar tools.",
+  system_prompt: "You are a helpful assistant with access to weather and calendar tools.",
   context: current_user  # Passed to tool#initialize
 )
 

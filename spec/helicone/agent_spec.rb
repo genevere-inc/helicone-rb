@@ -69,7 +69,7 @@ RSpec.describe Helicone::Agent do
     end
 
     it "adds system message if provided" do
-      agent = described_class.new(tools: [], system: "You are helpful")
+      agent = described_class.new(tools: [], system_prompt: "You are helpful")
 
       expect(agent.messages.first.role).to eq("system")
       expect(agent.messages.first.content).to eq("You are helpful")
