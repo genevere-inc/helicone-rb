@@ -9,12 +9,13 @@ module Helicone
     # Create an agent with tools and optional context
     #
     # @param client [Helicone::Client] Optional client (creates new one if not provided)
+    # @param session [Hash] Session config for Helicone tracking (id:, name:) - creates client if no client provided
     # @param tools [Array<Class>] Array of Tool subclasses
     # @param context [Object] Context object passed to tool#initialize
     # @param system_prompt [String] System prompt
     # @param messages [Array<Helicone::Message>] Initial messages (for continuing conversations)
-    def initialize(client: nil, tools: [], context: nil, system_prompt: nil, messages: [])
-      @client = client || Client.new
+    def initialize(client: nil, session: nil, tools: [], context: nil, system_prompt: nil, messages: [])
+      @client = client || build_client(session: session)
       @tools = tools
       @context = context
       @messages = messages.dup
@@ -129,6 +130,15 @@ module Helicone
 
     def find_tool_class(name)
       @tools.find { |t| t.function_name == name }
+    end
+
+    def build_client(session:)
+      return Client.new unless session
+
+      Client.new(
+        session_id: session[:id],
+        session_name: session[:name]
+      )
     end
   end
 end
