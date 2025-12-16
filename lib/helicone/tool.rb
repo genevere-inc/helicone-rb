@@ -98,5 +98,19 @@ module Helicone
     def execute(**args)
       raise NotImplementedError, "Subclasses must implement #execute"
     end
+
+    # Delegate to class method for instances
+    #
+    # @return [Hash] Tool definition formatted for OpenAI API
+    def to_openai_tool
+      self.class.to_openai_tool
+    end
+
+    # Delegate to class method for instances
+    #
+    # @return [String] The function name
+    def function_name
+      self.class.function_name
+    end
   end
 end

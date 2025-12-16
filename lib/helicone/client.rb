@@ -13,7 +13,7 @@ module Helicone
     def initialize(session_id: nil, session_name: nil, account_id: nil, account_name: nil)
       @client = OpenAI::Client.new(
         access_token: ENV["HELICONE_API_KEY"],
-        uri_base: Helicone::URI_BASE
+        uri_base: Helicone.configuration.base_url
       )
 
       # Add Helicone session headers if provided
