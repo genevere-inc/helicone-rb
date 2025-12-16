@@ -3,16 +3,17 @@
 require "logger"
 
 module Helicone
-  URI_BASE = "https://ai-gateway.helicone.ai/v1"
+  DEFAULT_BASE_URL = "https://ai-gateway.helicone.ai/v1"
 
   class Configuration
-    attr_accessor :logger, :default_model
+    attr_accessor :logger, :default_model, :base_url
 
     # Initialize configuration with defaults
     #
     # @return [Configuration]
     def initialize
       @default_model = "gpt-4o"
+      @base_url = DEFAULT_BASE_URL
       @logger = Logger.new($stdout, level: Logger::INFO)
     end
   end

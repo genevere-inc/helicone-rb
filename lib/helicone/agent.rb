@@ -30,13 +30,13 @@ module Helicone
       end
     end
 
-    # Run the agent with a prompt, executing tools until done
+    # Run the agent with an optional prompt, executing tools until done
     #
-    # @param prompt [String] User prompt to start with
+    # @param prompt [String, nil] User prompt to add (nil to use existing messages)
     # @param max_iterations [Integer] Maximum tool execution loops
     # @return [AgentResult]
-    def run(prompt, max_iterations: MAX_ITERATIONS)
-      @messages << Message.user_text(prompt)
+    def run(prompt = nil, max_iterations: MAX_ITERATIONS)
+      @messages << Message.user_text(prompt) if prompt
 
       iterations = 0
       while iterations < max_iterations
@@ -121,16 +121,17 @@ module Helicone
     end
 
     def execute_tool(tool_call)
-      tool_class = find_tool_class(tool_call.name)
+      tool = find_tool(tool_call.name)
 
-      unless tool_class
+      unless tool
         logger.warn("[Helicone::Agent] Unknown tool: #{tool_call.name}")
         return { error: "Unknown tool: #{tool_call.name}" }
       end
 
       logger.info("[Helicone::Agent] Executing tool: #{tool_call.name} with #{tool_call.arguments}")
 
-      tool_instance = tool_class.new(@context)
+      # Support both tool classes and tool instances
+      tool_instance = tool.is_a?(Class) ? tool.new(@context) : tool
       result = tool_instance.execute(**tool_call.arguments)
 
       result_preview = result.inspect
@@ -143,7 +144,7 @@ module Helicone
       { error: e.message }
     end
 
-    def find_tool_class(name)
+    def find_tool(name)
       @tools.find { |t| t.function_name == name }
     end
 
