@@ -4,7 +4,7 @@ module Helicone
   class Agent
     MAX_ITERATIONS = 10
 
-    attr_reader :client, :tools, :messages, :context, :turn_model, :response_model
+    attr_reader :client, :tools, :messages, :context, :model
 
     # Create an agent with tools and optional context
     #
@@ -14,14 +14,12 @@ module Helicone
     # @param context [Object] Context object passed to tool#initialize
     # @param system_prompt [String] System prompt
     # @param messages [Array<Helicone::Message>] Initial messages (for continuing conversations)
-    # @param turn_model [String] Model for tool-calling turns (defaults to Helicone.configuration.default_model)
-    # @param response_model [String] Model for final response (defaults to turn_model)
-    def initialize(client: nil, session: nil, tools: [], context: nil, system_prompt: nil, messages: [], turn_model: nil, response_model: nil)
+    # @param model [String] Model to use (defaults to Helicone.configuration.default_model)
+    def initialize(client: nil, session: nil, tools: [], context: nil, system_prompt: nil, messages: [], model: nil)
       @client = client || build_client(session: session)
       @tools = tools
       @context = context
-      @turn_model = turn_model
-      @response_model = response_model || turn_model
+      @model = model
       @messages = messages.dup
 
       # Add system message at the start if provided and not already present
@@ -40,7 +38,7 @@ module Helicone
 
       iterations = 0
       while iterations < max_iterations
-        response = call_llm(model: @turn_model)
+        response = call_llm
 
         tool_calls = response.tool_calls
         if tool_calls && !tool_calls.empty?
@@ -59,17 +57,7 @@ module Helicone
 
           iterations += 1
         else
-          # No tool calls - if response_model differs, make final call with it
-          if @response_model && @response_model != @turn_model
-            final_response = @client.chat(messages: @messages, model: @response_model)
-            return AgentResult.new(
-              content: final_response.content,
-              messages: @messages,
-              iterations: iterations,
-              response: final_response
-            )
-          end
-
+          # No tool calls - we're done
           return AgentResult.new(
             content: response.content,
             messages: @messages,
@@ -80,7 +68,7 @@ module Helicone
       end
 
       # Max iterations reached - make one final call without tools to get a response
-      final_response = @client.chat(messages: @messages, model: @response_model)
+      final_response = @client.chat(messages: @messages, model: @model)
 
       AgentResult.new(
         content: final_response.content,
@@ -106,10 +94,10 @@ module Helicone
       Helicone.configuration.logger
     end
 
-    def call_llm(model: nil)
+    def call_llm
       @client.chat(
         messages: @messages,
-        model: model,
+        model: @model,
         tools: tools_for_api,
         tool_choice: "auto"
       )
