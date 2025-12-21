@@ -10,13 +10,14 @@ module Helicone
     #
     # @param client [Helicone::Client] Optional client (creates new one if not provided)
     # @param session [Hash] Session config for Helicone tracking (id:, name:) - creates client if no client provided
+    # @param user [Hash] User config for Helicone tracking (id:, name:) - sets Helicone-User-Id header
     # @param tools [Array<Class>] Array of Tool subclasses
     # @param context [Object] Context object passed to tool#initialize
     # @param system_prompt [String] System prompt
     # @param messages [Array<Helicone::Message>] Initial messages (for continuing conversations)
     # @param model [String] Model to use (defaults to Helicone.configuration.default_model)
-    def initialize(client: nil, session: nil, tools: [], context: nil, system_prompt: nil, messages: [], model: nil)
-      @client = client || build_client(session: session)
+    def initialize(client: nil, session: nil, user: nil, tools: [], context: nil, system_prompt: nil, messages: [], model: nil)
+      @client = client || build_client(session: session, user: user)
       @tools = tools
       @context = context
       @model = model
@@ -136,12 +137,14 @@ module Helicone
       @tools.find { |t| t.function_name == name }
     end
 
-    def build_client(session:)
-      return Client.new unless session
+    def build_client(session:, user:)
+      return Client.new unless session || user
 
       Client.new(
-        session_id: session[:id],
-        session_name: session[:name]
+        session_id: session&.dig(:id),
+        session_name: session&.dig(:name),
+        account_id: user&.dig(:id),
+        account_name: user&.dig(:name)
       )
     end
   end
