@@ -114,10 +114,9 @@ module Helicone
     # @return [Hash] Message formatted for the API
     def to_h
       if @raw_message
-        # Select only the fields needed for the API
-        hash = { role: @raw_message[:role], content: @raw_message[:content] }
-        hash[:tool_calls] = @raw_message[:tool_calls] if @raw_message[:tool_calls]
-        hash
+        # Return the full raw message to preserve extra_content (thought signatures)
+        # and any other provider-specific fields (e.g., Gemini 3 requires thought_signature)
+        @raw_message
       else
         hash = { role: role, content: content }
         hash[:tool_call_id] = tool_call_id if tool_call_id
