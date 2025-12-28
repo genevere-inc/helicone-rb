@@ -4,7 +4,7 @@ module Helicone
   class Agent
     MAX_ITERATIONS = 10
 
-    attr_reader :client, :tools, :messages, :context, :model
+    attr_reader :client, :tools, :messages, :context, :model, :options
 
     # Create an agent with tools and optional context
     #
@@ -16,11 +16,13 @@ module Helicone
     # @param system_prompt [String] System prompt
     # @param messages [Array<Helicone::Message>] Initial messages (for continuing conversations)
     # @param model [String] Model to use (defaults to Helicone.configuration.default_model)
-    def initialize(client: nil, session: nil, user: nil, tools: [], context: nil, system_prompt: nil, messages: [], model: nil)
+    # @param options [Hash] Additional options passed through to chat calls (e.g., reasoning_effort)
+    def initialize(client: nil, session: nil, user: nil, tools: [], context: nil, system_prompt: nil, messages: [], model: nil, **options)
       @client = client || build_client(session: session, user: user)
       @tools = tools
       @context = context
       @model = model
+      @options = options
       @messages = messages.dup
 
       # Add system message at the start if provided and not already present
@@ -100,7 +102,8 @@ module Helicone
         messages: @messages,
         model: @model,
         tools: tools_for_api,
-        tool_choice: "auto"
+        tool_choice: "auto",
+        **@options
       )
     end
 
